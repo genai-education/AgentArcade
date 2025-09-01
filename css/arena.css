@@ -1,0 +1,533 @@
+/* Agent Arcades - Arena Styles */
+
+/* Arena Layout */
+.arena-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--primary-bg);
+}
+
+.arena-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--secondary-bg);
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.simulation-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--tertiary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.control-btn:hover:not(:disabled) {
+  background: var(--accent-bg);
+  color: var(--primary-text);
+  border-color: var(--border-color-accent);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-btn.primary {
+  background: var(--primary-gradient);
+  color: var(--primary-bg);
+  border-color: transparent;
+}
+
+.control-btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+}
+
+.speed-control label {
+  font-weight: 500;
+}
+
+#simulation-speed {
+  width: 100px;
+  accent-color: var(--primary-accent);
+}
+
+#speed-display {
+  font-family: var(--font-family-primary);
+  font-weight: 600;
+  color: var(--primary-text);
+  min-width: 30px;
+}
+
+/* Arena Main */
+.arena-main {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.simulation-viewport {
+  position: relative;
+  background: var(--primary-bg);
+  overflow: hidden;
+}
+
+.arena-canvas {
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 2px 2px, rgba(0, 255, 136, 0.1) 1px, transparent 0);
+  background-size: 40px 40px;
+  cursor: grab;
+}
+
+.arena-canvas:active {
+  cursor: grabbing;
+}
+
+.simulation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.scenario-info {
+  position: absolute;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
+  background: rgba(26, 26, 46, 0.95);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+}
+
+.scenario-info h3 {
+  color: var(--primary-accent);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.scenario-info p {
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Arena Sidebar */
+.arena-sidebar {
+  background: var(--secondary-bg);
+  border-left: var(--border-width) solid var(--border-color);
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.arena-sidebar h3 {
+  color: var(--primary-text);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+/* Agent Selection */
+.agent-selection {
+  background: var(--tertiary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+}
+
+.agent-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.agent-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: var(--primary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+}
+
+.agent-slot:hover {
+  border-color: var(--border-color-accent);
+}
+
+.agent-slot.occupied {
+  border-color: var(--primary-accent);
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.agent-slot-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.agent-slot-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: bold;
+  color: var(--primary-bg);
+}
+
+.agent-slot-name {
+  color: var(--primary-text);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.agent-slot-empty {
+  color: var(--muted-text);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+.agent-slot-remove {
+  background: transparent;
+  border: none;
+  color: var(--error-accent);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.agent-slot-remove:hover {
+  background: rgba(255, 51, 102, 0.1);
+}
+
+.add-agent-btn {
+  width: 100%;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--muted-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-agent-btn:hover {
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+  background: rgba(0, 255, 136, 0.05);
+}
+
+/* Scenario Selection */
+.scenario-selection {
+  background: var(--tertiary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+}
+
+.scenario-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  background: var(--primary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--primary-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.scenario-select:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+}
+
+/* Live Metrics */
+.live-metrics {
+  background: var(--tertiary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+}
+
+.metrics-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+}
+
+.metric-label {
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+}
+
+.metric-value {
+  color: var(--primary-text);
+  font-weight: 600;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+}
+
+/* Agent Visualization (Canvas Rendered) */
+.arena-agent {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  border: 2px solid var(--primary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  color: var(--primary-bg);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.arena-agent:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-glow);
+}
+
+.arena-agent.thinking {
+  animation: pulse 1s ease-in-out infinite;
+  border-color: var(--warning-accent);
+}
+
+.arena-agent.acting {
+  border-color: var(--success-accent);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}
+
+.arena-agent.error {
+  border-color: var(--error-accent);
+  background: var(--error-accent);
+  animation: shake 0.5s ease-in-out;
+}
+
+.agent-status-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-bg);
+}
+
+.agent-status-indicator.thinking {
+  background: var(--warning-accent);
+}
+
+.agent-status-indicator.acting {
+  background: var(--success-accent);
+}
+
+.agent-status-indicator.waiting {
+  background: var(--muted-text);
+}
+
+.agent-status-indicator.error {
+  background: var(--error-accent);
+}
+
+.agent-thought-bubble {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 26, 46, 0.95);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--secondary-text);
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+}
+
+.arena-agent:hover .agent-thought-bubble {
+  opacity: 1;
+  visibility: visible;
+}
+
+.agent-progress-bar {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 4px;
+  background: var(--secondary-bg);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.agent-progress-fill {
+  height: 100%;
+  background: var(--primary-gradient);
+  border-radius: var(--border-radius-sm);
+  transition: width var(--transition-normal);
+}
+
+/* Data Flow Visualization */
+.data-flow-line {
+  stroke: var(--secondary-accent);
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.6;
+  stroke-dasharray: 5, 5;
+  animation: dash 2s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.data-packet {
+  fill: var(--secondary-accent);
+  r: 3;
+  opacity: 0.8;
+}
+
+/* Scenario Environment */
+.scenario-environment {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.environment-object {
+  position: absolute;
+  background: var(--tertiary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--muted-text);
+}
+
+.environment-object.interactive {
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .arena-main {
+    grid-template-columns: 1fr 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .arena-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  
+  .arena-sidebar {
+    border-left: none;
+    border-top: var(--border-width) solid var(--border-color);
+    max-height: 300px;
+    flex-direction: row;
+    gap: var(--spacing-md);
+    overflow-x: auto;
+  }
+  
+  .agent-selection,
+  .scenario-selection,
+  .live-metrics {
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+  
+  .arena-controls {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+  
+  .simulation-controls {
+    justify-content: center;
+  }
+  
+  .speed-control {
+    justify-content: center;
+  }
+}

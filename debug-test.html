@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Arcades - Debug Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .debug-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .debug-title {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(22, 33, 62, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            color: #0f0f1e;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        
+        .console-output {
+            background: #000;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success { background: #00ff88; }
+        .status-error { background: #ff6b35; }
+        .status-warning { background: #ffc107; }
+        .status-loading { background: #0066ff; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1 class="debug-title">Agent Arcades Debug Test</h1>
+        
+        <div class="test-section">
+            <h3>🔧 Quick Tests</h3>
+            <button class="test-button" onclick="testBasicFunctionality()">Test Basic Functionality</button>
+            <button class="test-button" onclick="testWithDebugMode()">Test with Debug Mode</button>
+            <button class="test-button" onclick="testFallbackMode()">Test Fallback Mode</button>
+            <button class="test-button" onclick="window.location.href='index.html'">Launch Main App</button>
+            <button class="test-button" onclick="window.location.href='index.html?debug=true'">Launch with Debug</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Test Results</h3>
+            <div id="test-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Console Output</h3>
+            <div id="console-output" class="console-output"></div>
+            <button class="test-button" onclick="clearConsole()">Clear Console</button>
+        </div>
+    </div>
+
+    <script>
+        // Capture console output
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : '📝';
+            consoleOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        window.clearConsole = () => {
+            consoleOutput.textContent = '';
+        };
+        
+        function addTestResult(name, status, message) {
+            const results = document.getElementById('test-results');
+            const result = document.createElement('div');
+            result.style.cssText = 'margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; background: rgba(255,255,255,0.05);';
+            
+            const statusClass = status === 'success' ? 'status-success' : 
+                               status === 'error' ? 'status-error' : 
+                               status === 'warning' ? 'status-warning' : 'status-loading';
+            
+            result.innerHTML = `
+                <span class="status-indicator ${statusClass}"></span>
+                <strong>${name}:</strong> ${message}
+            `;
+            results.appendChild(result);
+        }
+        
+        async function testBasicFunctionality() {
+            console.log('🧪 Starting basic functionality test...');
+            addTestResult('Basic Test', 'loading', 'Testing basic functionality...');
+            
+            try {
+                // Test DOM elements
+                const requiredElements = ['loading-screen', 'loading-status', 'loading-progress-fill', 'app'];
+                let missingElements = [];
+                
+                requiredElements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (!element) {
+                        missingElements.push(id);
+                    }
+                });
+                
+                if (missingElements.length > 0) {
+                    addTestResult('DOM Elements', 'warning', `Missing elements: ${missingElements.join(', ')}`);
+                } else {
+                    addTestResult('DOM Elements', 'success', 'All required elements found');
+                }
+                
+                // Test browser capabilities
+                const capabilities = {
+                    indexedDB: 'indexedDB' in window,
+                    webGPU: 'gpu' in navigator,
+                    serviceWorker: 'serviceWorker' in navigator,
+                    modules: 'noModule' in HTMLScriptElement.prototype
+                };
+                
+                Object.entries(capabilities).forEach(([name, supported]) => {
+                    addTestResult(name, supported ? 'success' : 'warning', supported ? 'Supported' : 'Not supported');
+                });
+                
+                // Test module loading
+                try {
+                    const { ModuleChecker } = await import('./js/utils/module-checker.js');
+                    addTestResult('Module Loading', 'success', 'Module checker loaded successfully');
+                } catch (error) {
+                    addTestResult('Module Loading', 'error', `Failed to load modules: ${error.message}`);
+                }
+                
+                console.log('✅ Basic functionality test completed');
+                
+            } catch (error) {
+                console.error('❌ Basic functionality test failed:', error);
+                addTestResult('Basic Test', 'error', `Test failed: ${error.message}`);
+            }
+        }
+        
+        async function testWithDebugMode() {
+            console.log('🐛 Testing debug mode...');
+            addTestResult('Debug Mode', 'loading', 'Testing debug mode functionality...');
+            
+            try {
+                // Enable debug mode
+                localStorage.setItem('agentArcadesDebug', 'true');
+                addTestResult('Debug Mode', 'success', 'Debug mode enabled');
+                
+                console.log('Debug mode test completed. Launch the main app with debug=true to see debug output.');
+                
+            } catch (error) {
+                console.error('❌ Debug mode test failed:', error);
+                addTestResult('Debug Mode', 'error', `Debug test failed: ${error.message}`);
+            }
+        }
+        
+        async function testFallbackMode() {
+            console.log('🔧 Testing fallback mode...');
+            addTestResult('Fallback Mode', 'loading', 'Testing fallback functionality...');
+            
+            try {
+                // Test fallback modules
+                const { FallbackModules } = await import('./js/utils/fallback-modules.js');
+                addTestResult('Fallback Modules', 'success', 'Fallback modules loaded successfully');
+                
+                // Test creating fallback instances
+                const fallbackStorage = new FallbackModules.StorageManager();
+                await fallbackStorage.initialize();
+                addTestResult('Fallback Storage', 'success', 'Fallback storage initialized');
+                
+                console.log('✅ Fallback mode test completed');
+                
+            } catch (error) {
+                console.error('❌ Fallback mode test failed:', error);
+                addTestResult('Fallback Mode', 'error', `Fallback test failed: ${error.message}`);
+            }
+        }
+        
+        // Auto-run basic test on load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Debug test page loaded');
+            setTimeout(testBasicFunctionality, 1000);
+        });
+    </script>
+</body>
+</html>

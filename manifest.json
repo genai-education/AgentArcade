@@ -1,0 +1,69 @@
+{
+  "name": "Agent Arcades",
+  "short_name": "AgentArcades",
+  "description": "Revolutionary client-side AI agent development platform with visual programming and gamified learning",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "theme_color": "#1a1a2e",
+  "background_color": "#0f0f1e",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["education", "games", "productivity", "developer"],
+  "icons": [
+    {
+      "src": "assets/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Create New Agent",
+      "short_name": "New Agent",
+      "description": "Start creating a new AI agent",
+      "url": "/?action=new-agent",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-new-agent.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Join Tournament",
+      "short_name": "Tournament",
+      "description": "Join an active tournament",
+      "url": "/?action=join-tournament",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-tournament.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Collection",
+      "short_name": "Collection",
+      "description": "View your skill chip collection",
+      "url": "/?action=view-collection",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-collection.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+}

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agent Arcades - Revolutionary client-side AI agent development platform">
+    <meta name="keywords" content="AI, agents, visual programming, machine learning, gamification">
+    <meta name="author" content="Agent Arcades">
+    
+    <!-- Security Headers (relaxed for local development) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://esm.run https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn-lfs-us-1.hf.co; connect-src 'self' https://huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co https://*.hf.co https://api.openai.com; worker-src 'self' blob:;">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    
+    <!-- Icons (using data URI for favicon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%2300ff88' stroke-width='3'/%3E%3Ccircle cx='35' cy='35' r='8' fill='%2300ff88'/%3E%3Ccircle cx='65' cy='35' r='8' fill='%2300ff88'/%3E%3Ccircle cx='50' cy='65' r='8' fill='%2300ff88'/%3E%3Cpath d='M35 35 L65 35 L50 65 Z' fill='none' stroke='%2300ff88' stroke-width='2'/%3E%3C/svg%3E">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/node-editor.css">
+    <link rel="stylesheet" href="css/arena.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <title>Agent Arcades - AI Agent Development Platform</title>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="logo-container">
+                <svg class="logo" viewBox="0 0 100 100" width="80" height="80">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#00ff88" stroke-width="2"/>
+                    <circle cx="35" cy="35" r="8" fill="#00ff88"/>
+                    <circle cx="65" cy="35" r="8" fill="#00ff88"/>
+                    <circle cx="50" cy="65" r="8" fill="#00ff88"/>
+                    <path d="M35 35 L65 35 L50 65 Z" fill="none" stroke="#00ff88" stroke-width="2"/>
+                </svg>
+                <h1>Agent Arcades</h1>
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loading-progress-fill"></div>
+                </div>
+                <p id="loading-status">Initializing...</p>
+                <div class="loading-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-small">
+                    <svg viewBox="0 0 100 100" width="32" height="32">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#00ff88" stroke-width="3"/>
+                        <circle cx="35" cy="35" r="6" fill="#00ff88"/>
+                        <circle cx="65" cy="35" r="6" fill="#00ff88"/>
+                        <circle cx="50" cy="65" r="6" fill="#00ff88"/>
+                        <path d="M35 35 L65 35 L50 65 Z" fill="none" stroke="#00ff88" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1 class="app-title">Agent Arcades</h1>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="nav-button active" data-view="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </button>
+                <button class="nav-button" data-view="editor">
+                    <span class="nav-icon">⚡</span>
+                    <span class="nav-label">Agent Editor</span>
+                </button>
+                <button class="nav-button" data-view="arena">
+                    <span class="nav-icon">🏟️</span>
+                    <span class="nav-label">Arena</span>
+                </button>
+                <button class="nav-button" data-view="tournaments">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Tournaments</span>
+                </button>
+                <button class="nav-button" data-view="collection">
+                    <span class="nav-icon">💎</span>
+                    <span class="nav-label">Collection</span>
+                </button>
+            </nav>
+            
+            <div class="header-right">
+                <div class="model-status" id="model-status">
+                    <span class="status-indicator" id="model-indicator"></span>
+                    <span class="status-text" id="model-text">Loading...</span>
+                </div>
+                <button class="settings-button" id="settings-button">
+                    <span class="settings-icon">⚙️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="dashboard-grid">
+                    <!-- Quick Start Panel -->
+                    <div class="panel quick-start-panel">
+                        <h2>Quick Start</h2>
+                        <div class="quick-actions">
+                            <button class="action-button primary" id="new-agent-btn">
+                                <span class="action-icon">⚡</span>
+                                <span class="action-text">New Agent</span>
+                            </button>
+                            <button class="action-button secondary" id="templates-btn">
+                                <span class="action-icon">📋</span>
+                                <span class="action-text">Templates</span>
+                            </button>
+                            <button class="action-button secondary" id="tutorial-btn">
+                                <span class="action-icon">🎓</span>
+                                <span class="action-text">Tutorial</span>
+                            </button>
+                        </div>
+                        
+                        <div class="my-agents">
+                            <h3>My Agents</h3>
+                            <div class="agent-list" id="agent-list">
+                                <!-- Agents will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Tournament Panel -->
+                    <div class="panel tournament-panel">
+                        <h2>Featured Tournament</h2>
+                        <div class="featured-tournament" id="featured-tournament">
+                            <div class="tournament-info">
+                                <h3>"Debug Master Challenge"</h3>
+                                <div class="tournament-details">
+                                    <div class="detail-item">
+                                        <span class="detail-icon">🏆</span>
+                                        <span class="detail-text">Prize: Legendary Debug Chip</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-icon">⏰</span>
+                                        <span class="detail-text">3 days remaining</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-icon">👥</span>
+                                        <span class="detail-text">1,247 participants</span>
+                                    </div>
+                                </div>
+                                <button class="join-tournament-btn">Join Tournament</button>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-matches">
+                            <h3>Recent Matches</h3>
+                            <div class="match-list" id="recent-matches">
+                                <!-- Recent matches will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Chip Gallery Panel -->
+                    <div class="panel chip-gallery-panel">
+                        <h2>Skill Chip Gallery</h2>
+                        <div class="chip-summary" id="chip-summary">
+                            <div class="chip-count legendary">
+                                <span class="chip-icon">💎</span>
+                                <span class="chip-label">Legendary</span>
+                                <span class="chip-number" id="legendary-count">0</span>
+                            </div>
+                            <div class="chip-count epic">
+                                <span class="chip-icon">🔥</span>
+                                <span class="chip-label">Epic</span>
+                                <span class="chip-number" id="epic-count">0</span>
+                            </div>
+                            <div class="chip-count rare">
+                                <span class="chip-icon">⚡</span>
+                                <span class="chip-label">Rare</span>
+                                <span class="chip-number" id="rare-count">0</span>
+                            </div>
+                            <div class="chip-count common">
+                                <span class="chip-icon">💫</span>
+                                <span class="chip-label">Common</span>
+                                <span class="chip-number" id="common-count">0</span>
+                            </div>
+                        </div>
+                        <button class="view-collection-btn" data-view="collection">View Full Collection</button>
+                    </div>
+
+                    <!-- Daily Challenge Panel -->
+                    <div class="panel daily-challenge-panel">
+                        <h2>Daily Challenge</h2>
+                        <div class="challenge-info" id="daily-challenge">
+                            <h3>"Event Planning Gauntlet"</h3>
+                            <p class="challenge-description">
+                                Create an agent that can efficiently plan and coordinate a multi-day conference with complex scheduling constraints.
+                            </p>
+                            <div class="challenge-reward">
+                                <span class="reward-icon">🎁</span>
+                                <span class="reward-text">Reward: 3 Random Skill Chips</span>
+                            </div>
+                            <div class="challenge-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text">0% Complete</span>
+                            </div>
+                            <button class="start-challenge-btn">Start Challenge</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent Editor View -->
+            <div id="editor-view" class="view">
+                <div class="editor-layout">
+                    <!-- Node Palette -->
+                    <div class="node-palette">
+                        <h3>Skill Nodes</h3>
+                        <div class="node-categories">
+                            <div class="category" data-category="input">
+                                <h4>Input</h4>
+                                <div class="node-items">
+                                    <div class="node-item" data-type="text-input" draggable="true">
+                                        <span class="node-icon">📝</span>
+                                        <span class="node-name">Text Input</span>
+                                    </div>
+                                    <div class="node-item" data-type="data-input" draggable="true">
+                                        <span class="node-icon">📊</span>
+                                        <span class="node-name">Data Input</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="category" data-category="processing">
+                                <h4>Processing</h4>
+                                <div class="node-items">
+                                    <div class="node-item" data-type="analyze" draggable="true">
+                                        <span class="node-icon">🔍</span>
+                                        <span class="node-name">Analyze</span>
+                                    </div>
+                                    <div class="node-item" data-type="plan" draggable="true">
+                                        <span class="node-icon">📋</span>
+                                        <span class="node-name">Plan</span>
+                                    </div>
+                                    <div class="node-item" data-type="critique" draggable="true">
+                                        <span class="node-icon">🔍</span>
+                                        <span class="node-name">Critique</span>
+                                    </div>
+                                    <div class="node-item" data-type="summarize" draggable="true">
+                                        <span class="node-icon">📄</span>
+                                        <span class="node-name">Summarize</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="category" data-category="output">
+                                <h4>Output</h4>
+                                <div class="node-items">
+                                    <div class="node-item" data-type="text-output" draggable="true">
+                                        <span class="node-icon">📤</span>
+                                        <span class="node-name">Text Output</span>
+                                    </div>
+                                    <div class="node-item" data-type="action" draggable="true">
+                                        <span class="node-icon">⚡</span>
+                                        <span class="node-name">Action</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Node Editor Canvas -->
+                    <div class="editor-canvas-container">
+                        <div class="editor-toolbar">
+                            <div class="toolbar-left">
+                                <button class="toolbar-btn" id="save-agent-btn">
+                                    <span class="btn-icon">💾</span>
+                                    <span class="btn-text">Save</span>
+                                </button>
+                                <button class="toolbar-btn" id="load-agent-btn">
+                                    <span class="btn-icon">📁</span>
+                                    <span class="btn-text">Load</span>
+                                </button>
+                                <button class="toolbar-btn" id="test-agent-btn">
+                                    <span class="btn-icon">🧪</span>
+                                    <span class="btn-text">Test</span>
+                                </button>
+                            </div>
+                            <div class="toolbar-center">
+                                <input type="text" id="agent-name-input" placeholder="Agent Name" class="agent-name-input">
+                            </div>
+                            <div class="toolbar-right">
+                                <button class="toolbar-btn" id="zoom-in-btn">
+                                    <span class="btn-icon">🔍</span>
+                                    <span class="btn-text">+</span>
+                                </button>
+                                <button class="toolbar-btn" id="zoom-out-btn">
+                                    <span class="btn-icon">🔍</span>
+                                    <span class="btn-text">-</span>
+                                </button>
+                                <button class="toolbar-btn" id="reset-view-btn">
+                                    <span class="btn-icon">🎯</span>
+                                    <span class="btn-text">Reset</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <canvas id="node-editor-canvas" class="node-editor-canvas"></canvas>
+                        
+                        <div class="canvas-overlay">
+                            <div class="execution-trace" id="execution-trace">
+                                <h4>Execution Trace</h4>
+                                <div class="trace-content" id="trace-content">
+                                    <!-- Execution trace will be populated during testing -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Properties Panel -->
+                    <div class="properties-panel">
+                        <h3>Properties</h3>
+                        <div class="properties-content" id="properties-content">
+                            <div class="no-selection">
+                                <p>Select a node to edit its properties</p>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-stats">
+                            <h4>Agent Statistics</h4>
+                            <div class="stat-item">
+                                <span class="stat-label">Nodes:</span>
+                                <span class="stat-value" id="node-count">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Connections:</span>
+                                <span class="stat-value" id="connection-count">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Complexity:</span>
+                                <span class="stat-value" id="complexity-score">Low</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arena View -->
+            <div id="arena-view" class="view">
+                <div class="arena-layout">
+                    <div class="arena-controls">
+                        <div class="simulation-controls">
+                            <button class="control-btn primary" id="start-simulation-btn">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Start</span>
+                            </button>
+                            <button class="control-btn" id="pause-simulation-btn" disabled>
+                                <span class="btn-icon">⏸️</span>
+                                <span class="btn-text">Pause</span>
+                            </button>
+                            <button class="control-btn" id="stop-simulation-btn" disabled>
+                                <span class="btn-icon">⏹️</span>
+                                <span class="btn-text">Stop</span>
+                            </button>
+                            <button class="control-btn" id="replay-simulation-btn" disabled>
+                                <span class="btn-icon">🔄</span>
+                                <span class="btn-text">Replay</span>
+                            </button>
+                        </div>
+                        
+                        <div class="speed-control">
+                            <label for="simulation-speed">Speed:</label>
+                            <input type="range" id="simulation-speed" min="0.1" max="3" step="0.1" value="1">
+                            <span id="speed-display">1x</span>
+                        </div>
+                    </div>
+                    
+                    <div class="arena-main">
+                        <div class="simulation-viewport">
+                            <canvas id="arena-canvas" class="arena-canvas"></canvas>
+                            <div class="simulation-overlay">
+                                <div class="scenario-info" id="scenario-info">
+                                    <h3 id="scenario-title">Select a scenario to begin</h3>
+                                    <p id="scenario-description"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="arena-sidebar">
+                            <div class="agent-selection">
+                                <h3>Select Agents</h3>
+                                <div class="agent-slots" id="agent-slots">
+                                    <!-- Agent selection slots will be populated -->
+                                </div>
+                                <button class="add-agent-btn" id="add-agent-btn">+ Add Agent</button>
+                            </div>
+                            
+                            <div class="scenario-selection">
+                                <h3>Scenario</h3>
+                                <select id="scenario-select" class="scenario-select">
+                                    <option value="">Select Scenario...</option>
+                                    <option value="debug_basic">Debug Master Challenge</option>
+                                    <option value="planning_multi_step">Multi-Step Planning</option>
+                                    <option value="analysis_competition">Data Analysis Race</option>
+                                </select>
+                            </div>
+                            
+                            <div class="live-metrics" id="live-metrics">
+                                <h3>Live Metrics</h3>
+                                <div class="metrics-content">
+                                    <div class="metric-item">
+                                        <span class="metric-label">Time Elapsed:</span>
+                                        <span class="metric-value" id="time-elapsed">0:00</span>
+                                    </div>
+                                    <div class="metric-item">
+                                        <span class="metric-label">Actions Taken:</span>
+                                        <span class="metric-value" id="actions-taken">0</span>
+                                    </div>
+                                    <div class="metric-item">
+                                        <span class="metric-label">Success Rate:</span>
+                                        <span class="metric-value" id="success-rate">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament View -->
+            <div id="tournaments-view" class="view">
+                <div class="tournaments-layout">
+                    <div class="tournaments-header">
+                        <h2>Tournaments</h2>
+                        <button class="create-tournament-btn" id="create-tournament-btn">
+                            <span class="btn-icon">➕</span>
+                            <span class="btn-text">Create Tournament</span>
+                        </button>
+                    </div>
+                    
+                    <div class="tournaments-content">
+                        <div class="tournament-tabs">
+                            <button class="tab-btn active" data-tab="active">Active</button>
+                            <button class="tab-btn" data-tab="upcoming">Upcoming</button>
+                            <button class="tab-btn" data-tab="completed">Completed</button>
+                        </div>
+                        
+                        <div class="tournament-list" id="tournament-list">
+                            <!-- Tournaments will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collection View -->
+            <div id="collection-view" class="view">
+                <div class="collection-layout">
+                    <div class="collection-header">
+                        <h2>Skill Chip Collection</h2>
+                        <div class="collection-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Chips:</span>
+                                <span class="stat-value" id="total-chips">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Collection Value:</span>
+                                <span class="stat-value" id="collection-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="collection-filters">
+                        <div class="filter-group">
+                            <label for="rarity-filter">Rarity:</label>
+                            <select id="rarity-filter">
+                                <option value="all">All</option>
+                                <option value="legendary">Legendary</option>
+                                <option value="epic">Epic</option>
+                                <option value="rare">Rare</option>
+                                <option value="common">Common</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="category-filter">Category:</label>
+                            <select id="category-filter">
+                                <option value="all">All</option>
+                                <option value="processing">Processing</option>
+                                <option value="logic">Logic</option>
+                                <option value="memory">Memory</option>
+                                <option value="synergy">Synergy</option>
+                                <option value="special">Special</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="collection-grid" id="collection-grid">
+                        <!-- Skill chips will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals and Overlays -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal" id="modal">
+            <!-- Modal content will be populated dynamically -->
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="error-container" class="error-container hidden">
+        <!-- Error messages will be displayed here -->
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+
+    <!-- Fallback for browsers without module support -->
+    <script nomodule>
+        document.getElementById('loading-status').textContent = 'Your browser does not support ES6 modules. Please use a modern browser like Chrome 61+, Firefox 60+, or Safari 11+.';
+        document.getElementById('loading-screen').style.background = 'linear-gradient(135deg, #ff6b35 0%, #f44336 100%)';
+    </script>
+
+    <!-- CORS and Error Detection -->
+    <script>
+        // Detect CORS issues and provide helpful guidance
+        let corsDetected = false;
+        let moduleLoadFailed = false;
+
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            const loadingStatus = document.getElementById('loading-status');
+
+            // Check for CORS-related errors
+            if (e.message && (e.message.includes('CORS') || e.message.includes('Cross origin'))) {
+                corsDetected = true;
+                if (loadingStatus) {
+                    loadingStatus.innerHTML = `
+                        <div style="color: #ff6b35; margin-bottom: 1rem;">
+                            ❌ CORS Error Detected
+                        </div>
+                        <div style="color: #ffc107; font-size: 0.9rem; line-height: 1.4;">
+                            You're opening the file directly in the browser.<br>
+                            Agent Arcades needs a web server to work properly.
+                        </div>
+                    `;
+                    showCORSHelp();
+                }
+                return;
+            }
+
+            // Check for module loading failures
+            if (e.filename && e.filename.includes('.js')) {
+                moduleLoadFailed = true;
+                if (loadingStatus) {
+                    loadingStatus.textContent = 'Failed to load modules. Please check if you\'re using a web server.';
+                    loadingStatus.style.color = '#ff6b35';
+                    showCORSHelp();
+                }
+                return;
+            }
+
+            // Other errors
+            if (loadingStatus) {
+                loadingStatus.textContent = 'Failed to load application: ' + (e.error?.message || 'Unknown error');
+                loadingStatus.style.color = '#ff6b35';
+            }
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            const loadingStatus = document.getElementById('loading-status');
+            if (loadingStatus && !corsDetected && !moduleLoadFailed) {
+                loadingStatus.textContent = 'Failed to initialize: ' + (e.reason?.message || 'Unknown error');
+                loadingStatus.style.color = '#ff6b35';
+            }
+        });
+
+        function showCORSHelp() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (!loadingScreen) return;
+
+            // Remove existing help if any
+            const existingHelp = loadingScreen.querySelector('.cors-help');
+            if (existingHelp) existingHelp.remove();
+
+            const helpContainer = document.createElement('div');
+            helpContainer.className = 'cors-help';
+            helpContainer.style.cssText = `
+                margin-top: 2rem;
+                padding: 1.5rem;
+                background: rgba(255, 193, 7, 0.1);
+                border: 1px solid rgba(255, 193, 7, 0.3);
+                border-radius: 8px;
+                text-align: left;
+                max-width: 500px;
+            `;
+
+            helpContainer.innerHTML = `
+                <h3 style="color: #ffc107; margin-bottom: 1rem; font-size: 1.1rem;">
+                    🛠️ Quick Solutions:
+                </h3>
+                <div style="color: #ffffff; font-size: 0.9rem; line-height: 1.5;">
+                    <p style="margin-bottom: 1rem;">
+                        <strong>Option 1 (Immediate):</strong><br>
+                        Open <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">index-standalone.html</code> instead
+                    </p>
+                    <p style="margin-bottom: 1rem;">
+                        <strong>Option 2 (Full Features):</strong><br>
+                        Set up a local web server - see <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">START_HERE.md</code>
+                    </p>
+                </div>
+            `;
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = 'display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;';
+
+            const standaloneBtn = document.createElement('button');
+            standaloneBtn.textContent = '🚀 Open Standalone Version';
+            standaloneBtn.style.cssText = `
+                padding: 0.8rem 1.5rem;
+                background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+                color: #0f0f1e;
+                border: none;
+                border-radius: 6px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            `;
+            standaloneBtn.addEventListener('click', () => {
+                window.location.href = 'index-standalone.html';
+            });
+
+            const guideBtn = document.createElement('button');
+            guideBtn.textContent = '📖 View Setup Guide';
+            guideBtn.style.cssText = `
+                padding: 0.8rem 1.5rem;
+                background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+                color: #0f0f1e;
+                border: none;
+                border-radius: 6px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            `;
+            guideBtn.addEventListener('click', () => {
+                window.open('START_HERE.md', '_blank');
+            });
+
+            buttonContainer.appendChild(standaloneBtn);
+            buttonContainer.appendChild(guideBtn);
+            helpContainer.appendChild(buttonContainer);
+
+            loadingScreen.appendChild(helpContainer);
+        }
+
+        // Detect if we're running from file:// protocol
+        if (window.location.protocol === 'file:') {
+            setTimeout(() => {
+                if (!corsDetected && !moduleLoadFailed) {
+                    const loadingStatus = document.getElementById('loading-status');
+                    if (loadingStatus) {
+                        loadingStatus.innerHTML = `
+                            <div style="color: #ffc107; margin-bottom: 1rem;">
+                                ⚠️ Running from file:// protocol
+                            </div>
+                            <div style="color: #b8b8b8; font-size: 0.9rem;">
+                                For full functionality, please use a web server
+                            </div>
+                        `;
+                        showCORSHelp();
+                    }
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

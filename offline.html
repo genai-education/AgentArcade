@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Arcades - Offline</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+        }
+        
+        .offline-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .offline-subtitle {
+            font-size: 1.2rem;
+            color: #b8b8b8;
+            margin-bottom: 2rem;
+        }
+        
+        .offline-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+        
+        .retry-button {
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            color: #0f0f1e;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(22, 33, 62, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .feature-title {
+            color: #00ff88;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-description {
+            color: #b8b8b8;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff6b35;
+        }
+        
+        @media (max-width: 768px) {
+            .offline-container {
+                padding: 1.5rem;
+            }
+            
+            .offline-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .feature-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0066ff;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="3"/>
+            <circle cx="35" cy="35" r="8" fill="url(#gradient)"/>
+            <circle cx="65" cy="35" r="8" fill="url(#gradient)"/>
+            <circle cx="50" cy="65" r="8" fill="url(#gradient)"/>
+            <path d="M35 35 L65 35 L50 65 Z" fill="none" stroke="url(#gradient)" stroke-width="2"/>
+            <circle cx="50" cy="45" r="4" fill="url(#gradient)"/>
+        </svg>
+        
+        <h1 class="offline-title">Agent Arcades</h1>
+        <p class="offline-subtitle">AI Agent Development Platform</p>
+        
+        <p class="offline-message">
+            You're currently offline, but Agent Arcades is designed to work completely in your browser! 
+            Most features are still available without an internet connection.
+        </p>
+        
+        <button class="retry-button" onclick="window.location.reload()">
+            🔄 Try to Reconnect
+        </button>
+        
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>Offline Mode Active</span>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3 class="feature-title">Agent Editor</h3>
+                <p class="feature-description">
+                    Create and edit AI agents using the visual node editor. All your work is saved locally.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🏟️</span>
+                <h3 class="feature-title">Local Simulations</h3>
+                <p class="feature-description">
+                    Run agent simulations entirely in your browser using cached AI models.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">💎</span>
+                <h3 class="feature-title">Skill Collection</h3>
+                <p class="feature-description">
+                    View and manage your skill chip collection. All progress is stored locally.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">Practice Scenarios</h3>
+                <p class="feature-description">
+                    Access built-in scenarios and challenges that work without internet.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">Local Storage</h3>
+                <p class="feature-description">
+                    All your agents, progress, and achievements are safely stored in your browser.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🔧</span>
+                <h3 class="feature-title">Full Functionality</h3>
+                <p class="feature-description">
+                    Experience the complete Agent Arcades platform without any server dependencies.
+                </p>
+            </div>
+        </div>
+        
+        <script>
+            // Check for connection and update UI
+            function updateConnectionStatus() {
+                const statusIndicator = document.querySelector('.status-indicator');
+                const statusDot = document.querySelector('.status-dot');
+                const retryButton = document.querySelector('.retry-button');
+                
+                if (navigator.onLine) {
+                    statusIndicator.style.background = 'rgba(0, 255, 136, 0.1)';
+                    statusIndicator.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                    statusDot.style.background = '#00ff88';
+                    statusIndicator.innerHTML = '<span class="status-dot"></span><span>Connection Restored!</span>';
+                    retryButton.textContent = '🚀 Launch Agent Arcades';
+                    retryButton.onclick = () => window.location.href = '/';
+                } else {
+                    statusIndicator.style.background = 'rgba(255, 107, 53, 0.1)';
+                    statusIndicator.style.borderColor = 'rgba(255, 107, 53, 0.3)';
+                    statusDot.style.background = '#ff6b35';
+                    statusIndicator.innerHTML = '<span class="status-dot"></span><span>Offline Mode Active</span>';
+                    retryButton.textContent = '🔄 Try to Reconnect';
+                    retryButton.onclick = () => window.location.reload();
+                }
+            }
+            
+            // Update status on load and when connection changes
+            updateConnectionStatus();
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            
+            // Auto-redirect when connection is restored
+            window.addEventListener('online', () => {
+                setTimeout(() => {
+                    if (navigator.onLine) {
+                        window.location.href = '/';
+                    }
+                }, 2000);
+            });
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Arcades - Initialization Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .test-title {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(22, 33, 62, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-section h3 {
+            color: #00ff88;
+            margin-bottom: 1rem;
+        }
+        
+        .test-result {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .test-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+        
+        .test-error {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: #ff6b35;
+        }
+        
+        .test-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #00ff88 0%, #0066ff 100%);
+            color: #0f0f1e;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        
+        .console-output {
+            background: #000;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">Agent Arcades Initialization Test</h1>
+            <p>This page tests the initialization process and identifies any issues.</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🌐 Browser Compatibility</h3>
+            <div id="browser-tests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📦 Module Loading</h3>
+            <div id="module-tests"></div>
+            <button class="test-button" onclick="testModules()">Test Module Loading</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎮 Application Initialization</h3>
+            <div id="app-tests"></div>
+            <button class="test-button" onclick="testAppInitialization()">Test App Initialization</button>
+            <button class="test-button" onclick="window.location.href='index.html'">Launch Full App</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Console Output</h3>
+            <div id="console-output" class="console-output"></div>
+            <button class="test-button" onclick="clearConsole()">Clear Console</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Capture console output
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : '📝';
+            consoleOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        window.clearConsole = () => {
+            consoleOutput.textContent = '';
+        };
+        
+        // Test browser capabilities
+        function testBrowserCapabilities() {
+            const browserTests = document.getElementById('browser-tests');
+            const tests = [
+                { name: 'ES6 Modules', test: () => 'noModule' in HTMLScriptElement.prototype },
+                { name: 'IndexedDB', test: () => 'indexedDB' in window },
+                { name: 'Service Worker', test: () => 'serviceWorker' in navigator },
+                { name: 'WebGL', test: () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+                    } catch (e) {
+                        return false;
+                    }
+                }},
+                { name: 'WebGPU', test: () => 'gpu' in navigator },
+                { name: 'WebAssembly', test: () => 'WebAssembly' in window }
+            ];
+            
+            browserTests.innerHTML = '';
+            tests.forEach(test => {
+                const result = document.createElement('div');
+                const passed = test.test();
+                result.className = `test-result ${passed ? 'test-success' : 'test-error'}`;
+                result.textContent = `${test.name}: ${passed ? 'SUPPORTED' : 'NOT SUPPORTED'}`;
+                browserTests.appendChild(result);
+            });
+        }
+        
+        // Test module loading
+        window.testModules = async () => {
+            const moduleTests = document.getElementById('module-tests');
+            moduleTests.innerHTML = '<div class="test-result">Testing module loading...</div>';
+            
+            const modules = [
+                { name: 'ModuleChecker', path: './js/utils/module-checker.js' },
+                { name: 'FallbackModules', path: './js/utils/fallback-modules.js' },
+                { name: 'StorageManager', path: './js/utils/storage.js' },
+                { name: 'ErrorHandler', path: './js/utils/error-handler.js' },
+                { name: 'PerformanceMonitor', path: './js/utils/performance.js' }
+            ];
+            
+            moduleTests.innerHTML = '';
+            
+            for (const module of modules) {
+                const result = document.createElement('div');
+                try {
+                    const moduleExport = await import(module.path);
+                    result.className = 'test-result test-success';
+                    result.textContent = `${module.name}: LOADED ✅`;
+                    console.log(`Module ${module.name} loaded successfully`);
+                } catch (error) {
+                    result.className = 'test-result test-error';
+                    result.textContent = `${module.name}: FAILED - ${error.message}`;
+                    console.error(`Failed to load ${module.name}:`, error);
+                }
+                moduleTests.appendChild(result);
+            }
+        };
+        
+        // Test app initialization
+        window.testAppInitialization = async () => {
+            const appTests = document.getElementById('app-tests');
+            appTests.innerHTML = '<div class="test-result">Testing app initialization...</div>';
+
+            try {
+                // Try to import the main app
+                const { AgentArcadesApp } = await import('./js/app.js');
+
+                const result = document.createElement('div');
+                result.className = 'test-result test-success';
+                result.textContent = 'Main app module loaded successfully ✅';
+                appTests.innerHTML = '';
+                appTests.appendChild(result);
+
+                console.log('App module loaded successfully');
+
+                // Test DOM elements required by the app
+                const requiredElements = [
+                    'loading-screen', 'loading-status', 'loading-progress-fill', 'app'
+                ];
+
+                let missingElements = [];
+                requiredElements.forEach(id => {
+                    if (!document.getElementById(id)) {
+                        missingElements.push(id);
+                    }
+                });
+
+                if (missingElements.length === 0) {
+                    const result2 = document.createElement('div');
+                    result2.className = 'test-result test-success';
+                    result2.textContent = 'All required DOM elements found ✅';
+                    appTests.appendChild(result2);
+                } else {
+                    const result2 = document.createElement('div');
+                    result2.className = 'test-result test-warning';
+                    result2.textContent = `Missing DOM elements: ${missingElements.join(', ')} ⚠️`;
+                    appTests.appendChild(result2);
+                }
+
+                // Test storage availability
+                try {
+                    const testDB = indexedDB.open('test-db', 1);
+                    testDB.onsuccess = () => {
+                        const result3 = document.createElement('div');
+                        result3.className = 'test-result test-success';
+                        result3.textContent = 'IndexedDB accessible ✅';
+                        appTests.appendChild(result3);
+                        testDB.result.close();
+                    };
+                    testDB.onerror = () => {
+                        const result3 = document.createElement('div');
+                        result3.className = 'test-result test-error';
+                        result3.textContent = 'IndexedDB not accessible ❌';
+                        appTests.appendChild(result3);
+                    };
+                } catch (error) {
+                    const result3 = document.createElement('div');
+                    result3.className = 'test-result test-error';
+                    result3.textContent = `IndexedDB error: ${error.message} ❌`;
+                    appTests.appendChild(result3);
+                }
+
+            } catch (error) {
+                const result = document.createElement('div');
+                result.className = 'test-result test-error';
+                result.textContent = `App module loading failed: ${error.message}`;
+                appTests.innerHTML = '';
+                appTests.appendChild(result);
+                console.error('App module loading failed:', error);
+            }
+        };
+        
+        // Run browser tests on load
+        testBrowserCapabilities();
+        
+        console.log('🧪 Initialization test page loaded');
+        console.log('Click the test buttons to run specific tests');
+    </script>
+</body>
+</html>
